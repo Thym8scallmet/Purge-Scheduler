@@ -1,19 +1,13 @@
 [
     {
         "channel_id": 1219050297285017751,
-        "scheduled_time": "2024-03-27T00:00:00+00:00",
-        "amount": 10,
-        "recurrence": "hourly"
-    },
-    {
-        "channel_id": 1219050297285017751,
         "scheduled_time": "2024-03-27T23:02:00+00:00",
         "amount": 15,
         "recurrence": "daily"
     },
     {
         "channel_id": 1219050297285017751,
-        "scheduled_time": "2024-03-26T23:35:00+00:00",
+        "scheduled_time": "2024-03-27T03:35:00+00:00",
         "amount": 3,
         "recurrence": "hourly"
     }

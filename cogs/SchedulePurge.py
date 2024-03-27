@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 import aiofiles
 import discord
+import pytz
 from discord import app_commands
 from discord.ext import commands, tasks
 from discord.ui import Select, View
@@ -63,6 +64,36 @@ class SchedulePurge(commands.Cog):
       await interaction.response.send_message(
           "An error occurred while processing your request.", ephemeral=True)
 
+  async def update_missed_purge_jobs(self):
+      now = datetime.now(pytz.UTC)
+      updated_jobs = []
+      jobs_updated = False
+      try:
+          async with aiofiles.open("purgejobs.json", "r+") as file:
+              jobs = json.loads(await file.read())
+              for job in jobs:
+                  job_time = datetime.fromisoformat(job["scheduled_time"]).replace(tzinfo=pytz.UTC)
+                  if now >= job_time and job["recurrence"] != "none":
+                      intervals = {
+                          "daily": timedelta(days=1),
+                          "hourly": timedelta(hours=1),
+                          "by minute": timedelta(minutes=1),
+                          "weekly": timedelta(weeks=1),
+                          "biweekly": timedelta(weeks=2),
+                      }
+                      while now >= job_time:
+                          job_time += intervals[job["recurrence"]]
+                          jobs_updated = True
+                      job["scheduled_time"] = job_time.isoformat()
+                  updated_jobs.append(job)
+              if jobs_updated:
+                  await file.seek(0)
+                  await file.write(json.dumps(updated_jobs, indent=4))
+                  await file.truncate()
+      except Exception as e:
+          print(f"Error updating missed purge jobs: {e}")
+
+  
   @app_commands.command(name="view_purge_jobs",
                         description="View all scheduled purge jobs.")
   async def view_purge_jobs(self, interaction: discord.Interaction):

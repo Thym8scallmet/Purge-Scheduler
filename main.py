@@ -30,6 +30,9 @@ client.setup_hook = setup_hook
 
 @client.event
 async def on_ready():
+    schedule_purge_cog = client.get_cog("SchedulePurge")
+    if schedule_purge_cog:
+        await schedule_purge_cog.update_missed_purge_jobs()
     prfx = (
         Back.BLACK + Fore.GREEN 
         + time.strftime("%H:%M:%S UTC", time.gmtime()) 
