@@ -34,7 +34,6 @@ class CancelView(View):
     await interaction.response.send_message(
         content="Job cancelled successfully.", ephemeral=True)
 
-
 class SchedulePurge(commands.Cog):
 
   def __init__(self, client: commands.Bot):
@@ -93,7 +92,6 @@ class SchedulePurge(commands.Cog):
       except Exception as e:
           print(f"Error updating missed purge jobs: {e}")
 
-  
   @app_commands.command(name="view_purge_jobs",
                         description="View all scheduled purge jobs.")
   async def view_purge_jobs(self, interaction: discord.Interaction):
@@ -130,26 +128,33 @@ class SchedulePurge(commands.Cog):
   @app_commands.command(
       name="schedule_purge",
       description=
-      "Schedule a purge up to 2 weeks in advance, recurring at specified intervals."
+      "Schedule a purge, with optional recurrence, specifying date and time separately."
   )
   @app_commands.describe(
       channel="The channel where messages will be purged",
-      date_time="The date and time for the purge (YYYY-MM-DD HH:MM)",
+      date="The date for the purge (YYYY-MM-DD)",  # Will be replaced by automatic insertion
+      time="The time for the purge (HH:MM)",
       message_limit="The maximum number of messages to purge",
       recurrence="How often the purge should recur")
-  @app_commands.choices(recurrence=[
+  @app_commands.choices(
+      date=[
+          # Automatically insert current date as a choice
+          app_commands.Choice(name=datetime.now().strftime("%Y-%m-%d"), value=datetime.now().strftime("%Y-%m-%d")),
+      ],
+      recurrence=[
       app_commands.Choice(name="none", value="none"),
       app_commands.Choice(name="daily", value="daily"),
       app_commands.Choice(name="hourly", value="hourly"),
       app_commands.Choice(name="by minute", value="by minute"),
       app_commands.Choice(name="weekly", value="weekly"),
-      app_commands.Choice(name="biweekly", value="biweekly"),
+      app_commands.Choice(name="biweekly", value="biweekly"),    
   ])
+  # Added choices parameter to provide current date as a selectable option
   async def schedule_purge(self, interaction: discord.Interaction,
-                           channel: discord.TextChannel, date_time: str,
-                           message_limit: int, recurrence: str):
+     channel: discord.TextChannel, date: str, time: str,
+     message_limit: int, recurrence: str):
     try:
-      scheduled_time = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+      scheduled_time = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
 
       new_job = {
           "channel_id": channel.id,
