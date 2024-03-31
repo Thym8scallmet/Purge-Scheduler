@@ -12,7 +12,7 @@ class Feedback(commands.Cog):
     )  # Convert string to integer  # Replace 'YOUR_USER_ID' with your actual Discord user ID
 
   @app_commands.command(
-      name="feedback_simple",
+      name="feedback",
       description="Provide feedback or report an issue about the bot.")
   @app_commands.describe(details="Your feedback or issue report.")
   async def feedback_simple(self, interaction: discord.Interaction,

@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import pytz
 
 
 class BotTest(commands.Cog):
@@ -18,6 +19,10 @@ class BotTest(commands.Cog):
           content="Hello, the bot is working")
     except Exception as e:
       print(f"Error in bottest command: {e}")
+
+
+#common_timezones = pytz.common_timezones_set
+#print(common_timezones)
 
 
 async def setup(client: commands.Bot) -> None:

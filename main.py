@@ -21,7 +21,8 @@ async def setup_hook():
         "cogs.DisplayTime",
         "cogs.SchedulePurge",
         "cogs.MinutesPurge",
-        "cogs.BotTest",        
+        "cogs.BotTest",
+        "cogs.SetTimezone",
         "cogs.Feedback",
     ]:
       current_cog = cog
@@ -39,8 +40,11 @@ client.setup_hook = setup_hook
 @client.event
 async def on_ready():
   schedule_purge_cog = client.get_cog("SchedulePurge")
-  if schedule_purge_cog:
-    await schedule_purge_cog.update_missed_purge_jobs()
+  if schedule_purge_cog and hasattr(schedule_purge_cog, 'update_missed_purge_jobs'):
+      await schedule_purge_cog.update_missed_purge_jobs()
+  else:
+        print("The 'SchedulePurge' cog is not loaded or 'update_missed_purge_jobs' is not available.")
+    
   prfx = (Back.BLACK + Fore.GREEN +
           time.strftime("%H:%M:%S UTC", time.gmtime()) + Back.RESET +
           Fore.WHITE + Style.BRIGHT)
